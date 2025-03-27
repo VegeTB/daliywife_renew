@@ -1045,7 +1045,7 @@ class CheckInPlugin(Star):
 
         pass
 
-    @command("C01", alias=["c01"])
+    @shop.command("C01", alias=["c01"])
     async def shop_reset(self, event: AstrMessageEvent):
         """重置当日C-01申请次数"""
         ctx_id = _get_context_id(event)
