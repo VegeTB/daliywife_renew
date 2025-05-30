@@ -10,14 +10,6 @@ import traceback
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Dict, List, Optional, Set, Tuple
-from astrbot.api.event.filter import command, event_message_type, EventMessageType
-import json
-import datetime
-import logging
-import random
-import hashlib
-from typing import Dict, Any
-logger = logging.getLogger("CheckInPlugin")
 
 # --------------- 路径配置 ---------------
 PLUGIN_DIR = Path(__file__).parent
@@ -25,12 +17,6 @@ PAIR_DATA_PATH = PLUGIN_DIR / "pair_data.json"
 COOLING_DATA_PATH = PLUGIN_DIR / "cooling_data.json"
 BLOCKED_USERS_PATH = PLUGIN_DIR / "blocked_users.json"
 OPERATION_COUNTER_PATH = PLUGIN_DIR / "operation_counter.json"
-
-# 数据存储路径（check）
-DATA_DIR = os.path.join("data", "plugins", "astrbot_checkin_plugin")
-os.makedirs(DATA_DIR, exist_ok=True)
-DATA_FILE = os.path.join(DATA_DIR, "checkin_data.json")
-
 
 # --------------- 日志配置 ---------------
 logger = logging.getLogger("DailyWife")
@@ -357,8 +343,7 @@ class DailyWifePlugin(Star):
                 del self.operation_counter[group_id][today][target_id]
                 self._save_operation_counter()
 
-        yield event.plain_result(f"已重置公民 {target_id} 的当日申请次数")
-
+        yield event.plain_result(f"已重置用户 {target_id} 的当日次数")
     @filter.command("屏蔽")
     async def block_command_handler(self, event: AstrMessageEvent):
         """完整的屏蔽命令处理器"""
@@ -514,7 +499,7 @@ class DailyWifePlugin(Star):
 
             # yield event.plain_result(str(daily_count))
 
-            if daily_count >= 10:
+            if daily_count >= 2:
                 yield event.plain_result(f"🌏【C-01受理回执】\n⛔公民，你的申请因超出次数限制而被驳回。")
                 return
 
@@ -655,7 +640,7 @@ class DailyWifePlugin(Star):
             self._save_cooling_data()
 
 
-            action = "⚠️由超级地球繁荣部批准撤销C-01授权！\n🔊繁荣部提示：为庆祝超级地球保卫战胜利，每日C-01许可批准额度近期内提高至10。"
+            action = "⚠️由超级地球繁荣部批准撤销C-01授权！\n🔊繁荣部提示：每日每位公民至多可提交两份C-01表格。"
             yield event.chain_result([
                 Plain(f"{action}")
             ])
@@ -771,9 +756,3 @@ class DailyWifePlugin(Star):
     def __del__(self):
         """析构时启动定时任务"""
         asyncio.create_task(self._daily_reset_task())
-
-
-
-
-
-
