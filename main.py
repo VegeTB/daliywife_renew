@@ -514,7 +514,7 @@ class DailyWifePlugin(Star):
 
             # yield event.plain_result(str(daily_count))
 
-            if daily_count >= 2:
+            if daily_count >= 10:
                 yield event.plain_result(f"🌏【C-01受理回执】\n⛔公民，你的申请因超出次数限制而被驳回。")
                 return
 
@@ -655,7 +655,7 @@ class DailyWifePlugin(Star):
             self._save_cooling_data()
 
 
-            action = "⚠️由超级地球繁荣部批准撤销C-01授权！\n🔊繁荣部提示：每日每位公民至多可提交两份C-01表格。"
+            action = "⚠️由超级地球繁荣部批准撤销C-01授权！\n🔊繁荣部提示：为庆祝超级地球保卫战胜利，每日C-01许可批准额度近期内提高至10。"
             yield event.chain_result([
                 Plain(f"{action}")
             ])
